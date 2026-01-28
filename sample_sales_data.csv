@@ -1,0 +1,21 @@
+Date,Time,Order_ID,Item_Name,Category,Quantity,Unit_Price,Total_Amount
+20-01-2026,12:15,ORD001,Veg Thali,Main Dish,2,180,360
+20-01-2026,12:45,ORD002,Masala Dosa,Main Dish,1,90,90
+20-01-2026,13:10,ORD003,Idli Sambar,Main Dish,3,60,180
+20-01-2026,19:30,ORD004,Paneer Tikka,Starter,2,150,300
+20-01-2026,20:05,ORD005,Filter Coffee,Beverage,2,40,80
+21-01-2026,11:50,ORD006,Poori Bhaji,Main Dish,1,80,80
+21-01-2026,13:25,ORD007,Veg Biryani,Main Dish,2,160,320
+21-01-2026,18:40,ORD008,Gobi Manchurian,Starter,1,130,130
+21-01-2026,21:10,ORD009,Gulab Jamun,Dessert,3,30,90
+22-01-2026,12:05,ORD010,Veg Thali,Main Dish,1,180,180
+22-01-2026,12:50,ORD011,Lemon Rice,Main Dish,2,70,140
+22-01-2026,19:15,ORD012,Paneer Tikka,Starter,1,150,150
+22-01-2026,20:20,ORD013,Buttermilk,Beverage,2,35,70
+23-01-2026,8:45,ORD014,Idli Sambar,Main Dish,2,60,120
+23-01-2026,13:05,ORD015,Veg Thali,Main Dish,3,180,540
+23-01-2026,19:50,ORD016,Veg Manchurian,Starter,2,140,280
+23-01-2026,21:25,ORD017,Gulab Jamun,Dessert,4,30,120
+24-01-2026,12:10,ORD018,Masala Dosa,Main Dish,2,90,180
+24-01-2026,13:40,ORD019,Poori Bhaji,Main Dish,1,80,80
+24-01-2026,20:10,ORD020,Filter Coffee,Beverage,3,40,120
