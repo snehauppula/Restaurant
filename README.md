@@ -73,7 +73,6 @@ A sample CSV file (`sample_sales_data.csv`) is included in the project.
 │   ├── page.tsx            # Main dashboard
 │   └── globals.css         # Global styles
 ├── components/
-│   ├── FileUpload.tsx      # File upload component
 │   ├── DailySalesKPIs.tsx  # KPI cards
 │   ├── SalesTrendChart.tsx # Trend chart
 │   ├── TopBottomItems.tsx  # Item charts
