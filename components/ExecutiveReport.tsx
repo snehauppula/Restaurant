@@ -1,11 +1,7 @@
 'use client';
 
 import React from 'react';
-<<<<<<< HEAD
 import { X, Printer, TrendingUp, TrendingDown, Minus, Award, AlertCircle, Clock, CheckCircle2, Share2 } from 'lucide-react';
-=======
-import { X, Printer, TrendingUp, TrendingDown, Minus, Award, AlertCircle, Clock, CheckCircle2, Share2, Download } from 'lucide-react';
->>>>>>> 56c4c8271839767ae8ffc5b59fcb567093e7f933
 import type { ExecutiveReportData } from '@/lib/types';
 
 interface ExecutiveReportProps {
@@ -175,13 +171,8 @@ export default function ExecutiveReport({ data, onClose }: ExecutiveReportProps)
                                     key={i}
                                     title={`${bar.hour}: ${bar.sales}`}
                                     className={`flex-1 rounded-t-[1px] sm:rounded-t-sm transition-all duration-700 ${bar.isPeak
-<<<<<<< HEAD
                                         ? 'bg-primary-600 h-full'
                                         : bar.sales > 0 ? 'bg-primary-200 h-1/2' : 'bg-gray-100 h-1/6'
-=======
-                                            ? 'bg-primary-600 h-full'
-                                            : bar.sales > 0 ? 'bg-primary-200 h-1/2' : 'bg-gray-100 h-1/6'
->>>>>>> 56c4c8271839767ae8ffc5b59fcb567093e7f933
                                         }`}
                                 />
                             ))}
@@ -213,7 +204,6 @@ export default function ExecutiveReport({ data, onClose }: ExecutiveReportProps)
                     </div>
 
                     {/* Footer */}
-<<<<<<< HEAD
                     <div className="pt-8 border-t border-gray-100 text-center space-y-3 pb-12">
                         <p className="text-xs font-bold text-gray-500">
                             Developed by{' '}
@@ -227,10 +217,6 @@ export default function ExecutiveReport({ data, onClose }: ExecutiveReportProps)
                             </a>
                         </p>
                         <p className="text-[10px] text-gray-400 flex items-center justify-center gap-2">
-=======
-                    <div className="pt-8 border-t border-gray-100 text-center space-y-2 pb-12">
-                        <p className="text-xs text-gray-400 flex items-center justify-center gap-2">
->>>>>>> 56c4c8271839767ae8ffc5b59fcb567093e7f933
                             <Share2 className="w-3 h-3 text-gray-300" />
                             Generated automatically from your live sales data
                         </p>
