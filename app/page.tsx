@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { BarChart3, RefreshCw, Link2, X, TrendingUp } from 'lucide-react';
+import { BarChart3, RefreshCw, Link2, X, TrendingUp, Plus } from 'lucide-react';
 import SheetConfig from '@/components/SheetConfig';
 import DailySalesKPIs from '@/components/DailySalesKPIs';
 import SalesTrendChart from '@/components/SalesTrendChart';
@@ -11,6 +11,7 @@ import PeakHoursChart from '@/components/PeakHoursChart';
 import TodaysInsights from '@/components/TodaysInsights';
 import QuickFilters from '@/components/QuickFilters';
 import ExecutiveReport from '@/components/ExecutiveReport';
+import AddEntryModal from '@/components/AddEntryModal';
 import {
     calculateMetrics,
     generateTrendData,
@@ -29,11 +30,13 @@ import type { SalesRecord, ExecutiveReportData } from '@/lib/types';
 
 // Default Google Sheets URL (the one provided by the user)
 const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1ZavNIywb80lOThdIXM7zH9FCUj1N8hPe9v1azr2O0gA';
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLpP6YAadH8GFlY9W0cyx7tbgTZ7GQuDVl-6LPtCnQC1PglLOWaX0-hJ_3_3Ps2nh_/exec';
 
 export default function Home() {
     const [salesData, setSalesData] = useState<SalesRecord[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [sheetUrl, setSheetUrl] = useState<string>(DEFAULT_SHEET_URL);
+    const [scriptUrl, setScriptUrl] = useState<string>(DEFAULT_SCRIPT_URL); // For Add Entry sync
     const [dataLoaded, setDataLoaded] = useState(false);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
@@ -44,6 +47,8 @@ export default function Home() {
     const [showReport, setShowReport] = useState(false);
     const [reportType, setReportType] = useState<'today' | 'thismonth'>('today');
     const [showReportPicker, setShowReportPicker] = useState(false);
+    const [showAddEntry, setShowAddEntry] = useState(false);
+    const [showConfig, setShowConfig] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const loadSheetData = async (url: string) => {
@@ -97,26 +102,26 @@ export default function Home() {
     return (
         <div className="min-h-screen">
             {/* Header */}
-            <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm print:hidden">
+            <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm print:hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl">
-                                <BarChart3 className="w-6 h-6 text-white" />
+                        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                            <div className="p-2 sm:p-2.5 bg-gradient-to-br from-primary-500 to-purple-600 rounded-xl flex-shrink-0">
+                                <BarChart3 className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                             </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-gradient">
-                                    Restaurant Sales Dashboard
+                            <div className="min-w-0">
+                                <h1 className="text-lg sm:text-2xl font-bold text-gradient truncate">
+                                    <span className="hidden xs:inline">Restaurant Sales</span> Dashboard
                                 </h1>
                                 {dataLoaded && lastUpdated && (
-                                    <div className="text-sm text-gray-600 mt-0.5 flex items-center gap-2">
-                                        <span className="flex items-center gap-1">
-                                            <Link2 className="w-3 h-3" />
-                                            <span className="text-success-600 font-bold">Connected</span>
+                                    <div className="text-[10px] sm:text-sm text-gray-600 mt-0.5 flex items-center gap-1 sm:gap-2">
+                                        <span className="flex items-center gap-0.5 sm:gap-1">
+                                            <Link2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-success-600" />
+                                            <span className="text-success-600 font-bold">Live</span>
                                         </span>
                                         <span className="text-gray-300">•</span>
-                                        <span className="text-gray-400 font-medium whitespace-nowrap">
-                                            Last Refreshed: {lastUpdated.toLocaleTimeString()}
+                                        <span className="text-gray-400 font-medium truncate">
+                                            {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
                                     </div>
                                 )}
@@ -124,38 +129,49 @@ export default function Home() {
                         </div>
 
                         {hasData && (
-                            <div className="flex items-center gap-2 sm:gap-4 overflow-x-auto pb-2 sm:pb-0">
+                            <div className="flex items-center gap-1.5 sm:gap-3">
                                 <button
                                     onClick={() => setShowReportPicker(true)}
+                                    title="Get Snapshot"
                                     className="
-                                        flex items-center gap-2 px-4 py-2 
+                                        flex items-center justify-center gap-2 p-2.5 sm:px-4 sm:py-2 
                                         bg-gradient-to-r from-primary-600 to-primary-700 
                                         text-white rounded-xl font-bold shadow-lg shadow-primary-200 
                                         hover:shadow-primary-300 hover:scale-[1.03] active:scale-95 
-                                        transition-all duration-200 whitespace-nowrap
+                                        transition-all duration-200
                                     "
                                 >
-                                    <BarChart3 className="w-4 h-4" />
-                                    <span>Get Snapshot</span>
+                                    <BarChart3 className="w-5 h-5 sm:w-4 sm:h-4" />
+                                    <span className="hidden md:inline">Snapshot</span>
                                 </button>
 
-                                <span className="text-sm text-gray-500 font-medium hidden lg:inline">
-                                    {filteredData.length} records
-                                </span>
+                                <button
+                                    onClick={() => setShowAddEntry(true)}
+                                    title="Add Entry"
+                                    className="
+                                        flex items-center justify-center gap-2 p-2.5 sm:px-4 sm:py-2 
+                                        bg-gray-900 text-white rounded-xl font-bold
+                                        hover:bg-black hover:scale-[1.03] active:scale-95 
+                                        transition-all duration-200 shadow-lg shadow-gray-200
+                                    "
+                                >
+                                    <Plus className="w-5 h-5 sm:w-4 sm:h-4" />
+                                    <span className="hidden md:inline">Add Entry</span>
+                                </button>
+
                                 <button
                                     onClick={handleRefresh}
                                     disabled={isLoading}
+                                    title="Refresh"
                                     className="
-                    px-4 py-2 bg-white text-primary-600 rounded-lg font-medium
-                    border-2 border-primary-300 hover:border-primary-500
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                    transform hover:scale-105 transition-all duration-200
-                    shadow-sm hover:shadow-md
-                    flex items-center gap-2
-                  "
+                                        p-2.5 sm:px-4 sm:py-2 bg-white text-primary-600 rounded-xl font-medium
+                                        border-2 border-primary-200 hover:border-primary-400
+                                        disabled:opacity-50 disabled:cursor-not-allowed
+                                        transform hover:scale-105 transition-all duration-200
+                                        shadow-sm hover:shadow-md flex items-center justify-center
+                                    "
                                 >
-                                    <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-                                    <span className="hidden sm:inline">Refresh</span>
+                                    <RefreshCw className={`w-5 h-5 sm:w-4 sm:h-4 ${isLoading ? 'animate-spin' : ''}`} />
                                 </button>
                             </div>
                         )}
@@ -164,7 +180,7 @@ export default function Home() {
             </header>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 print:hidden">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 print:hidden">
                 {error && (
                     <div className="mb-8 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start gap-4 animate-in fade-in slide-in-from-top-2">
                         <div className="p-2 bg-red-100 text-red-600 rounded-xl">
@@ -176,6 +192,7 @@ export default function Home() {
                         </div>
                     </div>
                 )}
+
                 {isLoading ? (
                     <div className="flex items-center justify-center h-64">
                         <div className="text-center">
@@ -183,58 +200,72 @@ export default function Home() {
                             <p className="text-gray-600 font-medium">Loading data from Google Sheets...</p>
                         </div>
                     </div>
-                ) : !dataLoaded ? (
-                    <div className="max-w-3xl mx-auto">
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                                Welcome! 👋
-                            </h2>
-                            <p className="text-gray-600 text-lg">
-                                Connect your Google Sheets to get instant insights
-                            </p>
-                        </div>
-                        <SheetConfig
-                            onSheetUrlSubmit={loadSheetData}
-                            isLoading={isLoading}
-                            currentSheetUrl={DEFAULT_SHEET_URL}
-                        />
-                    </div>
                 ) : (
                     <div className="space-y-8">
-                        {/* KPIs */}
-                        {metrics && <DailySalesKPIs metrics={metrics} />}
-
-                        {/* Quick Filters - Sticky */}
-                        <QuickFilters
-                            dateRange={dateRange}
-                            category={category}
-                            timeSlot={timeSlot}
-                            categories={categories}
-                            onDateRangeChange={setDateRange}
-                            onCategoryChange={setCategory}
-                            onTimeSlotChange={setTimeSlot}
-                        />
-
-                        {/* Today's Insights */}
-                        {insights.length > 0 && <TodaysInsights insights={insights} />}
-
-                        {/* Sales Trend */}
-                        {trendData.length > 0 && (
-                            <SalesTrendChart data={trendData} />
+                        {!dataLoaded && !isLoading && !error && (
+                            <div className="flex items-center justify-center h-64">
+                                <div className="text-center">
+                                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
+                                    <p className="text-gray-600 font-medium">Initializing Dashboard...</p>
+                                </div>
+                            </div>
                         )}
 
-                        {/* Top & Bottom Items */}
-                        {topItems.length > 0 && bottomItems.length > 0 && (
-                            <TopBottomItems topItems={topItems} bottomItems={bottomItems} />
+                        {dataLoaded && (
+                            <>
+                                {/* KPIs */}
+                                {metrics && <DailySalesKPIs metrics={metrics} />}
+
+                                {/* Quick Filters */}
+                                <QuickFilters
+                                    dateRange={dateRange}
+                                    category={category}
+                                    timeSlot={timeSlot}
+                                    categories={categories}
+                                    onDateRangeChange={setDateRange}
+                                    onCategoryChange={setCategory}
+                                    onTimeSlotChange={setTimeSlot}
+                                />
+
+                                {/* Today's Insights */}
+                                {insights.length > 0 && <TodaysInsights insights={insights} />}
+
+                                {/* Sales Charts */}
+                                {trendData.length > 0 && <SalesTrendChart data={trendData} />}
+                                {topItems.length > 0 && bottomItems.length > 0 && (
+                                    <TopBottomItems topItems={topItems} bottomItems={bottomItems} />
+                                )}
+
+                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    {categoryData.length > 0 && <CategoryPerformance data={categoryData} />}
+                                    {hourlyData.length > 0 && <PeakHoursChart data={hourlyData} />}
+                                </div>
+                            </>
                         )}
 
-                        {/* Category Performance & Peak Hours */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {categoryData.length > 0 && (
-                                <CategoryPerformance data={categoryData} />
-                            )}
-                            {hourlyData.length > 0 && (
-                                <PeakHoursChart data={hourlyData} />
+                        {/* Collapsible Connectivity Settings */}
+                        <div className="mt-12 pt-12 border-t border-gray-100">
+                            <button
+                                onClick={() => setShowConfig(!showConfig)}
+                                className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest hover:text-primary-600 transition-colors mx-auto"
+                            >
+                                <Link2 className="w-3 h-3" />
+                                {showConfig ? 'Hide Connectivity Settings' : 'Connectivity Settings'}
+                            </button>
+
+                            {showConfig && (
+                                <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                    <SheetConfig
+                                        onSheetUrlSubmit={(url, sUrl) => {
+                                            if (sUrl) setScriptUrl(sUrl);
+                                            loadSheetData(url);
+                                            setShowConfig(false);
+                                        }}
+                                        isLoading={isLoading}
+                                        currentSheetUrl={sheetUrl}
+                                        currentScriptUrl={scriptUrl}
+                                    />
+                                </div>
                             )}
                         </div>
                     </div>
@@ -256,7 +287,7 @@ export default function Home() {
                 </p>
             </footer>
 
-            {/* Report Type Picker Modal */}
+            {/* Modals */}
             {showReportPicker && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm animate-in fade-in duration-300 print:hidden">
                     <div className="bg-white w-full max-w-md p-8 rounded-[2rem] shadow-2xl relative animate-in zoom-in-95 duration-200">
@@ -311,7 +342,6 @@ export default function Home() {
                 </div>
             )}
 
-            {/* Premium Executive Report Overlay */}
             {showReport && (
                 <ExecutiveReport
                     data={generateExecutiveReportData(
@@ -321,6 +351,14 @@ export default function Home() {
                     onClose={() => setShowReport(false)}
                 />
             )}
+
+            <AddEntryModal
+                isOpen={showAddEntry}
+                onClose={() => setShowAddEntry(false)}
+                onSubmitSuccess={handleRefresh}
+                scriptUrl={scriptUrl}
+                categories={categories}
+            />
         </div>
     );
 }

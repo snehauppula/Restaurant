@@ -12,7 +12,7 @@ A premium, owner-centric restaurant analytics dashboard that connects directly t
 - 📑 **Executive Business Snapshot (New!)**
   - Interactive Daily/Monthly report selector
   - Visual-first storytelling (Icons/Badges instead of tables)
-  - Actionable recommendations (e.g., "Stock up on Paneer")
+  - Actionable recommendations (e.g., "Paneer is trending")
   - **Single-page Print/PDF optimization** for professional sharing
 
 - 🔗 **Google Sheets Auto-Loading**
@@ -20,11 +20,13 @@ A premium, owner-centric restaurant analytics dashboard that connects directly t
   - No manual CSV uploads required
   - Real-time connection status monitoring
 
-- 📊 **Strategic Analytics**
-  - **Smart Insights**: Automated business tips based on data trends
-  - **Quick Filters**: Focus on Today, This Month, or specific Meal Slots (Lunch/Dinner)
-  - **KPI Cards**: Gross Revenue, Total Orders, and Average Bill Value
-  - **Visual Trends**: Beautiful charts for items, categories, and peak hours
+- ✍️ **Live Data Entry (New!)**
+  - Add new sales records directly from the dashboard
+  - Real-time sync to your Google Sheet
+  - Auto-calculation of totals and smart category selection
+
+- **📱 Mobile Optimized**
+  - Full-screen forms and horizontal scrolling chips for a native app feel
 
 ## 🚀 Quick Start
 
@@ -37,6 +39,19 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## 📡 Live Sync Setup (Google Apps Script)
+
+To enable the **Add Entry** feature to write data directly to your Google Sheet:
+
+1. Open your **Google Sheet**.
+2. Go to **Extensions** -> **Apps Script**.
+3. Create a new file named `Sync.gs` and paste the provided sync code (see `google_apps_script.js` in the project).
+4. Click **Deploy** -> **New Deployment**.
+5. Select **Type: Web App**.
+6. Set **Execute as: Me** and **Who has access: Anyone**.
+7. Deploy and copy the **Web App URL**.
+8. Paste this URL into the **Connectivity Settings** at the bottom of the dashboard.
 
 ## 📋 Data Configuration
 
@@ -53,50 +68,31 @@ The dashboard fetches data from a public Google Sheets CSV export. Your sheet sh
 | Unit_Price | Number | 180 |
 | Total_Amount | Number | 360 |
 
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS (with Premium Aesthetics)
-- **Charts**: Recharts
-- **Icons**: Lucide React
-- **PDF/Print**: Custom CSS Optimization
-
 ## 📁 Project Structure
 
 ```
 ├── app/
-│   ├── layout.tsx          # Root layout with premium Inter font
-│   ├── page.tsx            # Main dashboard & Sheet orchestration
-│   └── globals.css         # Global styles & Design tokens
+│   ├── api/add-entry/      # Next.js API route for secure sync
+│   ├── page.tsx            # Main dashboard orchestration
+│   └── ...
 ├── components/
-│   ├── ExecutiveReport.tsx # Premium storytelling report
-│   ├── SheetConfig.tsx     # Google Sheets URL manager
-│   ├── TodaysInsights.tsx  # Smart business recommendations
-│   ├── QuickFilters.tsx    # Time & Category selectors
-│   └── ...                 # Visual chart components
+│   ├── ExecutiveReport.tsx # Storytelling snapshot report
+│   ├── AddEntryModal.tsx   # Live data entry form (Mobile optimized)
+│   ├── SheetConfig.tsx     # Connectivity settings manager
+│   └── ...
 ├── lib/
-│   ├── sheetsIntegration.ts # Google Sheets fetching logic
-│   ├── dataProcessor.ts    # Business logic & Metric calculations
-│   └── types.ts            # Enterprise-grade TS definitions
-└── package.json
+│   ├── sheetsIntegration.ts # Read logic
+│   └── dataProcessor.ts    # Business logic & KPI calculations
+└── google_apps_script.js   # Code for Google Sheet Sync backend
 ```
 
 ## 🎯 Dashboard Routine
 
-1. **Connect**: Enter your Google Sheets URL in the config panel
-2. **Review**: Check the **Smart Insights** for immediate action items
-3. **Generate**: Click **Get Snapshot** to see your Daily or Monthly "Business Story"
-4. **Share**: Print the snapshot to PDF to share results with partners or staff
-
-## 🌟 Visual Excellence
-
-✅ **wow-factor design** with soft gradients and shadows
-✅ **Responsive layout** for tablet and mobile use
-✅ **Actionable over Analytical**: Tells you what to do, not just what happened
-✅ **One-click insights** for non-technical users
+1. **Verify Connection**: Ensure the "Live" green badge appears in the header.
+2. **Add Entry**: Use the "Add Entry" button to record new sales on the fly.
+3. **Review**: Check the **Smart Insights** for immediate action items.
+4. **Get Snapshot**: Generate your Daily/Monthly snapshot and print to PDF.
 
 ---
 
-**Designed and Developed by Flowsite ai** ❤️
-
+**Designed and Developed by [Flowsite ai](https://wa.me/8500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20interested%20in%20your%20services)** ❤️

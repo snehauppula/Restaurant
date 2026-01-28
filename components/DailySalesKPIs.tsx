@@ -56,32 +56,32 @@ export default function DailySalesKPIs({ metrics }: DailySalesKPIsProps) {
     };
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {kpis.map((kpi) => {
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {kpis.map((kpi, index) => {
                 const Icon = kpi.icon;
                 const colors = getColorClasses(kpi.color);
-                const isPositive = kpi.change >= 0;
 
                 return (
                     <div
                         key={kpi.title}
-                        className="metric-card group"
+                        className={`metric-card group p-4 sm:p-6 ${index === 2 ? 'sm:col-span-2 lg:col-span-1' : ''}`}
                     >
-                        <div className="flex items-start justify-between mb-4">
-                            <div className={`p-3 rounded-xl ${colors.bg} group-hover:scale-110 transition-transform duration-200`}>
-                                <Icon className={`w-6 h-6 ${colors.icon}`} />
+                        <div className="flex items-center sm:items-start justify-between mb-3 sm:mb-4">
+                            <div className={`p-2.5 sm:p-3 rounded-xl ${colors.bg} group-hover:scale-110 transition-transform duration-200`}>
+                                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${colors.icon}`} />
                             </div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest sm:hidden">
+                                Live Metric
+                            </p>
                         </div>
 
                         <div>
-                            <p className="text-sm font-medium text-gray-600 mb-1">
+                            <p className="text-xs sm:text-sm font-bold text-gray-500 mb-0.5 sm:mb-1 uppercase tracking-tight">
                                 {kpi.title}
                             </p>
-                            <p className={`text-3xl font-bold ${colors.text} tracking-tight`}>
+                            <p className={`text-2xl sm:text-3xl font-black ${colors.text} tracking-tighter`}>
                                 {kpi.value}
                             </p>
-
-
                         </div>
                     </div>
                 );

@@ -204,8 +204,19 @@ export default function ExecutiveReport({ data, onClose }: ExecutiveReportProps)
                     </div>
 
                     {/* Footer */}
-                    <div className="pt-8 border-t border-gray-100 text-center space-y-2 pb-12">
-                        <p className="text-xs text-gray-400 flex items-center justify-center gap-2">
+                    <div className="pt-8 border-t border-gray-100 text-center space-y-3 pb-12">
+                        <p className="text-xs font-bold text-gray-500">
+                            Developed by{' '}
+                            <a
+                                href="https://wa.me/8500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20viewing%20the%20business%20snapshot%20and%20need%20assistance"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary-600 hover:text-primary-700 underline decoration-primary-300"
+                            >
+                                Flowsite ai
+                            </a>
+                        </p>
+                        <p className="text-[10px] text-gray-400 flex items-center justify-center gap-2">
                             <Share2 className="w-3 h-3 text-gray-300" />
                             Generated automatically from your live sales data
                         </p>
