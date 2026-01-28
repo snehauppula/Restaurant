@@ -102,7 +102,7 @@ export default function Home() {
     return (
         <div className="min-h-screen">
             {/* Header */}
-            <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 shadow-sm print:hidden">
+            <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-10 shadow-sm print:hidden">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
