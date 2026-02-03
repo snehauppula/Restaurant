@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Vistara Restaurant Sales Dashboard',
+    title: 'Vistara Restaurant Dashboard',
     description: 'Premium analytics dashboard for restaurant sales insights',
 };
 
