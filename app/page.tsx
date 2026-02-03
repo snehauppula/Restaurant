@@ -54,6 +54,7 @@ export default function Home() {
     const [error, setError] = useState<string | null>(null);
 
     // Caching keys
+
     const CACHE_KEY = 'restaurant_sales_data';
     const CACHE_TIME_KEY = 'restaurant_sales_last_updated';
 
@@ -168,7 +169,7 @@ export default function Home() {
                             </div>
                             <div className="min-w-0">
                                 <h1 className="text-lg sm:text-2xl font-bold text-gradient truncate">
-                                    <span className="hidden xs:inline">Vistara Restaurant Sales</span>
+                                    Vistara <span className="hidden xs:inline">Restaurant</span>
                                 </h1>
                                 <div className="text-[10px] sm:text-sm text-gray-600 mt-0.5 flex items-center gap-1 sm:gap-2">
                                     {isRefreshing ? (
