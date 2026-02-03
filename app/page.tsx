@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { BarChart3, RefreshCw, Link2, X, TrendingUp, Plus } from 'lucide-react';
-import SheetConfig from '@/components/SheetConfig';
 import DailySalesKPIs from '@/components/DailySalesKPIs';
 import SalesTrendChart from '@/components/SalesTrendChart';
 import TopBottomItems from '@/components/TopBottomItems';
@@ -50,7 +49,6 @@ export default function Home() {
     const [reportType, setReportType] = useState<'today' | 'thismonth'>('today');
     const [showReportPicker, setShowReportPicker] = useState(false);
     const [showAddEntry, setShowAddEntry] = useState(false);
-    const [showConfig, setShowConfig] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     // Caching keys
@@ -169,7 +167,7 @@ export default function Home() {
                             </div>
                             <div className="min-w-0">
                                 <h1 className="text-lg sm:text-2xl font-bold text-gradient truncate">
-                                    Vistara <span className="hidden xs:inline">Restaurant</span>
+                                    Vistara Restaurant <span className="hidden xs:inline">Dashboard</span>
                                 </h1>
                                 <div className="text-[10px] sm:text-sm text-gray-600 mt-0.5 flex items-center gap-1 sm:gap-2">
                                     {isRefreshing ? (
@@ -304,31 +302,6 @@ export default function Home() {
                             </>
                         )}
 
-                        {/* Collapsible Connectivity Settings */}
-                        <div className="mt-12 pt-12 border-t border-gray-100">
-                            <button
-                                onClick={() => setShowConfig(!showConfig)}
-                                className="flex items-center gap-2 text-xs font-black text-gray-400 uppercase tracking-widest hover:text-primary-600 transition-colors mx-auto"
-                            >
-                                <Link2 className="w-3 h-3" />
-                                {showConfig ? 'Hide Connectivity Settings' : 'Connectivity Settings'}
-                            </button>
-
-                            {showConfig && (
-                                <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                    <SheetConfig
-                                        onSheetUrlSubmit={(url, sUrl) => {
-                                            if (sUrl) setScriptUrl(sUrl);
-                                            loadSheetData(url);
-                                            setShowConfig(false);
-                                        }}
-                                        isLoading={isLoading}
-                                        currentSheetUrl={sheetUrl}
-                                        currentScriptUrl={scriptUrl}
-                                    />
-                                </div>
-                            )}
-                        </div>
                     </div>
                 )}
             </main>
@@ -338,12 +311,12 @@ export default function Home() {
                 <p>
                     Designed and Developed by{' '}
                     <a
-                        href="https://wa.me/8500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20interested%20in%20your%20services"
+                        href="https://wa.me/8500097071?text=Hi%20FlowSite%20AI%2C%20I%27m%20interested%20in%20your%20Dashboard%20services"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 decoration-primary-400 hover:decoration-primary-600"
                     >
-                        Flowsite ai
+                        FlowSite AI
                     </a>
                 </p>
             </footer>
