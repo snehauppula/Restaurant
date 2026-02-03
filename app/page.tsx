@@ -12,6 +12,7 @@ import TodaysInsights from '@/components/TodaysInsights';
 import QuickFilters from '@/components/QuickFilters';
 import ExecutiveReport from '@/components/ExecutiveReport';
 import AddEntryModal from '@/components/AddEntryModal';
+import DashboardSkeleton from '@/components/DashboardSkeleton';
 import {
     calculateMetrics,
     generateTrendData,
@@ -35,6 +36,7 @@ const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwLpP6YAadH8
 export default function Home() {
     const [salesData, setSalesData] = useState<SalesRecord[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isRefreshing, setIsRefreshing] = useState(false);
     const [sheetUrl, setSheetUrl] = useState<string>(DEFAULT_SHEET_URL);
     const [scriptUrl, setScriptUrl] = useState<string>(DEFAULT_SCRIPT_URL); // For Add Entry sync
     const [dataLoaded, setDataLoaded] = useState(false);
@@ -51,8 +53,16 @@ export default function Home() {
     const [showConfig, setShowConfig] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadSheetData = async (url: string) => {
-        setIsLoading(true);
+    // Caching keys
+    const CACHE_KEY = 'restaurant_sales_data';
+    const CACHE_TIME_KEY = 'restaurant_sales_last_updated';
+
+    const loadSheetData = async (url: string, showFullLoader = false) => {
+        if (showFullLoader) {
+            setIsLoading(true);
+        } else {
+            setIsRefreshing(true);
+        }
 
         try {
             setError(null);
@@ -60,23 +70,50 @@ export default function Home() {
             setSalesData(records);
             setSheetUrl(url);
             setDataLoaded(true);
-            setLastUpdated(new Date());
+            const now = new Date();
+            setLastUpdated(now);
+
+            // Cache data
+            localStorage.setItem(CACHE_KEY, JSON.stringify(records));
+            localStorage.setItem(CACHE_TIME_KEY, now.toISOString());
         } catch (error) {
             console.error('Error fetching Google Sheets data:', error);
             setError('Failed to load data. Please check your Google Sheets URL and ensure it is "Public" (Anyone with the link can view).');
         } finally {
             setIsLoading(false);
+            setIsRefreshing(false);
         }
     };
 
     const handleRefresh = () => {
         if (sheetUrl) {
-            loadSheetData(sheetUrl);
+            loadSheetData(sheetUrl, true);
         }
     };
 
     useEffect(() => {
-        loadSheetData(DEFAULT_SHEET_URL);
+        // 1. Try to load from cache first for instant UI
+        const cachedData = localStorage.getItem(CACHE_KEY);
+        const cachedTime = localStorage.getItem(CACHE_TIME_KEY);
+
+        if (cachedData) {
+            try {
+                const records = JSON.parse(cachedData);
+                setSalesData(records);
+                setDataLoaded(true);
+                if (cachedTime) {
+                    setLastUpdated(new Date(cachedTime));
+                }
+                // 2. Background fetch to update cache
+                loadSheetData(DEFAULT_SHEET_URL, false);
+            } catch (e) {
+                console.error('Failed to parse cached data', e);
+                loadSheetData(DEFAULT_SHEET_URL, true);
+            }
+        } else {
+            // No cache, do initial full load
+            loadSheetData(DEFAULT_SHEET_URL, true);
+        }
     }, []);
 
     const hasData = salesData.length > 0;
@@ -99,6 +136,26 @@ export default function Home() {
     const insights = hasFilteredData ? generateInsights(filteredData) : [];
     const categories = hasData ? getUniqueCategories(salesData) : [];
 
+    // Calculate next order ID
+    const getNextOrderId = () => {
+        if (!hasData) return 'ORD-1001';
+
+        const orderIds = salesData
+            .map(r => {
+                // Try to extract numeric part from strings like "ORD-123" or "123"
+                const match = r.orderId.match(/\d+/);
+                return match ? parseInt(match[0]) : 0;
+            })
+            .filter(id => id > 0);
+
+        if (orderIds.length === 0) return 'ORD-1001';
+
+        const maxId = Math.max(...orderIds);
+        return `ORD-${maxId + 1}`;
+    };
+
+    const nextOrderId = getNextOrderId();
+
     return (
         <div className="min-h-screen">
             {/* Header */}
@@ -111,24 +168,37 @@ export default function Home() {
                             </div>
                             <div className="min-w-0">
                                 <h1 className="text-lg sm:text-2xl font-bold text-gradient truncate">
-                                    <span className="hidden xs:inline">Restaurant Sales</span> Dashboard
+                                    <span className="hidden xs:inline">Vistara Restaurant Sales</span>
                                 </h1>
-                                {dataLoaded && lastUpdated && (
-                                    <div className="text-[10px] sm:text-sm text-gray-600 mt-0.5 flex items-center gap-1 sm:gap-2">
-                                        <span className="flex items-center gap-0.5 sm:gap-1">
-                                            <Link2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-success-600" />
-                                            <span className="text-success-600 font-bold">Live</span>
+                                <div className="text-[10px] sm:text-sm text-gray-600 mt-0.5 flex items-center gap-1 sm:gap-2">
+                                    {isRefreshing ? (
+                                        <span className="flex items-center gap-1.5 animate-pulse">
+                                            <RefreshCw className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-primary-500 animate-spin" />
+                                            <span className="text-primary-600 font-bold">Refreshing...</span>
                                         </span>
-                                        <span className="text-gray-300">•</span>
-                                        <span className="text-gray-400 font-medium truncate">
-                                            {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                        </span>
-                                    </div>
-                                )}
+                                    ) : (
+                                        <>
+                                            {dataLoaded && (
+                                                <span className="flex items-center gap-0.5 sm:gap-1">
+                                                    <Link2 className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-success-600" />
+                                                    <span className="text-success-600 font-bold">Live Data</span>
+                                                </span>
+                                            )}
+                                        </>
+                                    )}
+                                    {lastUpdated && (
+                                        <>
+                                            <span className="text-gray-300">•</span>
+                                            <span className="text-gray-400 font-medium truncate">
+                                                Updated {lastUpdated.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
-                        {hasData && (
+                        {dataLoaded && (
                             <div className="flex items-center gap-1.5 sm:gap-3">
                                 <button
                                     onClick={() => setShowReportPicker(true)}
@@ -161,7 +231,7 @@ export default function Home() {
 
                                 <button
                                     onClick={handleRefresh}
-                                    disabled={isLoading}
+                                    disabled={isLoading || isRefreshing}
                                     title="Refresh"
                                     className="
                                         p-2.5 sm:px-4 sm:py-2 bg-white text-primary-600 rounded-xl font-medium
@@ -171,7 +241,7 @@ export default function Home() {
                                         shadow-sm hover:shadow-md flex items-center justify-center
                                     "
                                 >
-                                    <RefreshCw className={`w-5 h-5 sm:w-4 sm:h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                                    <RefreshCw className={`w-5 h-5 sm:w-4 sm:h-4 ${(isLoading || isRefreshing) ? 'animate-spin' : ''}`} />
                                 </button>
                             </div>
                         )}
@@ -193,22 +263,12 @@ export default function Home() {
                     </div>
                 )}
 
-                {isLoading ? (
-                    <div className="flex items-center justify-center h-64">
-                        <div className="text-center">
-                            <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
-                            <p className="text-gray-600 font-medium">Loading data from Google Sheets...</p>
-                        </div>
-                    </div>
+                {(isLoading && !dataLoaded) ? (
+                    <DashboardSkeleton />
                 ) : (
                     <div className="space-y-8">
                         {!dataLoaded && !isLoading && !error && (
-                            <div className="flex items-center justify-center h-64">
-                                <div className="text-center">
-                                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary-200 border-t-primary-600 mx-auto mb-4"></div>
-                                    <p className="text-gray-600 font-medium">Initializing Dashboard...</p>
-                                </div>
-                            </div>
+                            <DashboardSkeleton />
                         )}
 
                         {dataLoaded && (
@@ -358,6 +418,7 @@ export default function Home() {
                 onSubmitSuccess={handleRefresh}
                 scriptUrl={scriptUrl}
                 categories={categories}
+                nextOrderId={nextOrderId}
             />
         </div>
     );

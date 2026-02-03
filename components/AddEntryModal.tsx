@@ -9,9 +9,10 @@ interface AddEntryModalProps {
     onSubmitSuccess: () => void;
     scriptUrl: string;
     categories: string[];
+    nextOrderId: string;
 }
 
-export default function AddEntryModal({ isOpen, onClose, onSubmitSuccess, scriptUrl, categories }: AddEntryModalProps) {
+export default function AddEntryModal({ isOpen, onClose, onSubmitSuccess, scriptUrl, categories, nextOrderId }: AddEntryModalProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -19,13 +20,21 @@ export default function AddEntryModal({ isOpen, onClose, onSubmitSuccess, script
     const [formData, setFormData] = useState({
         Date: new Date().toLocaleDateString('en-GB').split('/').join('-'), // DD-MM-YYYY
         Time: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-        Order_ID: `ORD-${Date.now().toString().slice(-6)}`,
+        Order_ID: nextOrderId,
         Item_Name: '',
         Category: categories[0] || 'Main Dish',
         Quantity: 1,
         Unit_Price: 0,
         Total_Amount: 0
     });
+
+    // Reset form when nextOrderId changes (e.g. after refresh)
+    useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            Order_ID: nextOrderId
+        }));
+    }, [nextOrderId, isOpen]);
 
     // Auto-calculate total amount
     useEffect(() => {
@@ -165,7 +174,7 @@ export default function AddEntryModal({ isOpen, onClose, onSubmitSuccess, script
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                                <div className="grid grid-cols-1 gap-3 sm:gap-4">
                                     <div className="space-y-1.5 sm:space-y-2">
                                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Category</label>
                                         <select
@@ -179,15 +188,6 @@ export default function AddEntryModal({ isOpen, onClose, onSubmitSuccess, script
                                                 <option value="Main Dish">Main Dish</option>
                                             )}
                                         </select>
-                                    </div>
-                                    <div className="space-y-1.5 sm:space-y-2">
-                                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Order ID</label>
-                                        <input
-                                            type="text"
-                                            value={formData.Order_ID}
-                                            onChange={e => setFormData({ ...formData, Order_ID: e.target.value })}
-                                            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 bg-gray-50 border-2 border-transparent focus:border-primary-500 rounded-xl sm:rounded-2xl transition-all outline-none font-bold text-sm sm:text-base"
-                                        />
                                     </div>
                                 </div>
 
