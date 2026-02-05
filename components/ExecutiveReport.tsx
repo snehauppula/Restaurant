@@ -208,7 +208,7 @@ export default function ExecutiveReport({ data, onClose }: ExecutiveReportProps)
                         <p className="text-xs font-bold text-gray-500">
                             Developed by{' '}
                             <a
-                                href="https://wa.me/8500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20viewing%20the%20business%20snapshot%20and%20need%20assistance"
+                                href="https://wa.me/918500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20viewing%20the%20business%20snapshot%20and%20need%20assistance"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-primary-600 hover:text-primary-700 underline decoration-primary-300"

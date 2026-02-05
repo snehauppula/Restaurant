@@ -95,4 +95,4 @@ The dashboard fetches data from a public Google Sheets CSV export. Your sheet sh
 
 ---
 
-**Designed and Developed by [Flowsite ai](https://wa.me/8500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20interested%20in%20your%20services)** ❤️
+**Designed and Developed by [Flowsite ai](https://wa.me/918500097071?text=Hi%20Flowsite%20AI%2C%20I%27m%20interested%20in%20your%20services)** ❤️

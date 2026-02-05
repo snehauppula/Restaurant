@@ -311,7 +311,7 @@ export default function Home() {
                 <p>
                     Designed and Developed by{' '}
                     <a
-                        href="https://wa.me/8500097071?text=Hi%20FlowSite%20AI%2C%20I%27m%20interested%20in%20your%20Dashboard%20services"
+                        href="https://wa.me/918500097071?text=Hi%20FlowSite%20AI%2C%20I%27m%20interested%20in%20your%20Dashboard%20services"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 decoration-primary-400 hover:decoration-primary-600"
