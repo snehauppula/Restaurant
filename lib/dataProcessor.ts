@@ -236,11 +236,13 @@ export function generateInsights(records: SalesRecord[]): Array<{ type: 'success
         .map(([hour]) => hour);
 
     if (peakHours.length > 0) {
-        const peakText = peakHours.map(h => {
+        const peakLabels = Array.from(new Set(peakHours.map(h => {
             if (h >= 12 && h <= 14) return 'lunch (12-2 PM)';
             if (h >= 19 && h <= 21) return 'dinner (7-9 PM)';
             return `${h}:00 hour`;
-        }).join(' and ');
+        })));
+
+        const peakText = peakLabels.join(' and ');
 
         insights.push({
             type: 'info',
